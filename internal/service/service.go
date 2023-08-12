@@ -7,4 +7,5 @@ import (
 
 type AuthService interface {
 	Login(context.Context, model.LoginInfo) (model.JwtToken, error)
+	Logout(context.Context, model.JwtToken) error
 }

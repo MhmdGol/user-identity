@@ -10,7 +10,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/go-redis/redis/v8"
+	"github.com/redis/go-redis/v9"
 )
 
 type AuthService struct {
@@ -57,4 +57,17 @@ func (as *AuthService) Login(ctx context.Context, l model.LoginInfo) (model.JwtT
 	})
 
 	return token, err
+}
+
+func (as *AuthService) Logout(ctx context.Context, t model.JwtToken) error {
+	tc, err := as.jwt.ExtractClaims(t)
+	if err != nil {
+		return err
+	}
+
+	as.redisClient.Del(ctx, fmt.Sprint(tc.ID)).Err()
+
+	as.sessionRepo.Remove(model.ID(tc.ID))
+
+	return nil
 }

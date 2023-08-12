@@ -23,6 +23,7 @@ message LoginResponse {
 
 message LogoutRequest {}
 message LogoutResponse {}
+
 message ChangePasswordRequest {}
 message ChangePasswordResponse {}
 message PasswordRecoveryRequest {}

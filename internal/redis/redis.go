@@ -3,7 +3,7 @@ package redis
 import (
 	"Identity/cmd/config"
 
-	"github.com/go-redis/redis/v8"
+	"github.com/redis/go-redis/v9"
 )
 
 func NewRedisClient(conf config.Config) *redis.Client {
