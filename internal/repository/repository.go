@@ -12,4 +12,5 @@ type SessionRepo interface {
 type UserRepo interface {
 	Create(model.RawUser) error
 	ByID(model.ID) (model.UserInfo, error)
+	ByUsername(string) (model.UserInfo, error)
 }

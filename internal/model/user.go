@@ -10,6 +10,7 @@ type UserInfo struct {
 	Created_at     time.Time
 	Email          string
 	Role           string
+	Status         string
 }
 
 type RawUser struct {
@@ -19,4 +20,5 @@ type RawUser struct {
 	Password string
 	Email    string
 	Role     string
+	Status   string
 }

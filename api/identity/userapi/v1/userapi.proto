@@ -1,0 +1,53 @@
+syntax = "proto3";
+
+package identity.userapi.v1;
+
+option go_package = "identity/internal/proto/userapiv1";
+
+service UserService {
+    rpc CreateUser(CreateUserRequest) returns (CreateUserResponse);
+    rpc UserByID(UserByIDRequest) returns (UserByIDResponse);
+    rpc ChangePermission(ChangePermissionRequest) returns (ChangePermissionResponse);
+    rpc ChangeStatus(ChangeStatusRequest) returns (ChangeStatusResponse);
+}
+
+message ChangeStatusRequest {
+    string id = 1;
+    string status = 2;
+}
+
+message ChangeStatusResponse {}
+
+message ChangePermissionRequest {
+    string id = 1;
+    string permission_object = 2;
+    string permission_action = 3;
+}
+
+message ChangePermissionResponse {
+
+}
+
+message CreateUserRequest {
+    string uun = 1;
+    string username = 2;
+    string password = 3;
+    string email = 4;
+    string role = 5;
+}
+
+message CreateUserResponse {}
+
+message UserByIDRequest {
+    string id = 1;
+}
+
+message UserByIDResponse {
+    string id = 1;
+    string uun = 2;
+    string username = 3;
+    string email = 4;
+    string creation_time = 6;
+    string role = 5;
+    string status = 7;
+}

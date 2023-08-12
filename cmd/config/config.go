@@ -3,10 +3,15 @@ package config
 import "github.com/spf13/viper"
 
 type Config struct {
-	HttpPort  string   `mapstructure:"HTTP_PORT"`
-	SecretKey string   `mapstructure:"SECRET_KEY"`
-	Database  Database `mapstructure:",squash"`
-	Casbin    Casbin   `mapstructure:",squash"`
+	HttpPort string   `mapstructure:"HTTP_PORT"`
+	RSAPair  RSAPair  `mapstructure:",squash"`
+	Database Database `mapstructure:",squash"`
+	Redis    Redis    `mapstructure:",squash"`
+}
+
+type RSAPair struct {
+	SecretKeyPath string `mapstructure:"SECRET_KEY_PATH"`
+	PublicKeyPath string `mapstructure:"PUBLIC_KEY_PATH"`
 }
 
 type Database struct {
@@ -17,9 +22,9 @@ type Database struct {
 	Name     string `mapstructure:"DB_NAME"`
 }
 
-type Casbin struct {
-	ConfPath string `mapstructure:"CAS_CONF_PATH"`
-	CSVPath  string `mapstructure:"CAS_CSV_PATH"`
+type Redis struct {
+	Uri      string `mapstructure:"REDIS_URI"`
+	Password string `mapstrrcture:"REDIS_PASSWORD"`
 }
 
 func Load() (Config, error) {
@@ -30,14 +35,15 @@ func Load() (Config, error) {
 	viper.ReadInConfig()
 
 	viper.BindEnv("HTTP_PORT")
-	viper.BindEnv("SECRET_KEY")
 	viper.BindEnv("DB_USERNAME")
 	viper.BindEnv("DB_PASSWORD")
 	viper.BindEnv("DB_HOST")
 	viper.BindEnv("DB_PORT")
 	viper.BindEnv("DB_NAME")
-	viper.BindEnv("CAS_CONF_PATH")
-	viper.BindEnv("CAS_CSV_PATH")
+	viper.BindEnv("SECRET_KEY_PATH")
+	viper.BindEnv("PUBLIC_KEY_PATH")
+	viper.BindEnv("REDIS_URI")
+	viper.BindEnv("REDIS_PASSWORD")
 
 	var c Config
 	err := viper.Unmarshal(&c)
