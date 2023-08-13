@@ -19,10 +19,12 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	AuthService_Login_FullMethodName            = "/identity.authapi.v1.AuthService/Login"
-	AuthService_Logout_FullMethodName           = "/identity.authapi.v1.AuthService/Logout"
-	AuthService_ChangePassword_FullMethodName   = "/identity.authapi.v1.AuthService/ChangePassword"
-	AuthService_PasswordRecovery_FullMethodName = "/identity.authapi.v1.AuthService/PasswordRecovery"
+	AuthService_Login_FullMethodName                   = "/identity.authapi.v1.AuthService/Login"
+	AuthService_Logout_FullMethodName                  = "/identity.authapi.v1.AuthService/Logout"
+	AuthService_ChangePassword_FullMethodName          = "/identity.authapi.v1.AuthService/ChangePassword"
+	AuthService_PasswordRecovery_FullMethodName        = "/identity.authapi.v1.AuthService/PasswordRecovery"
+	AuthService_ResetPassword_FullMethodName           = "/identity.authapi.v1.AuthService/ResetPassword"
+	AuthService_TwoFactorAuthentication_FullMethodName = "/identity.authapi.v1.AuthService/TwoFactorAuthentication"
 )
 
 // AuthServiceClient is the client API for AuthService service.
@@ -33,6 +35,8 @@ type AuthServiceClient interface {
 	Logout(ctx context.Context, in *LogoutRequest, opts ...grpc.CallOption) (*LogoutResponse, error)
 	ChangePassword(ctx context.Context, in *ChangePasswordRequest, opts ...grpc.CallOption) (*ChangePasswordResponse, error)
 	PasswordRecovery(ctx context.Context, in *PasswordRecoveryRequest, opts ...grpc.CallOption) (*PasswordRecoveryResponse, error)
+	ResetPassword(ctx context.Context, in *ResetPasswordRequest, opts ...grpc.CallOption) (*ResetPasswordResponse, error)
+	TwoFactorAuthentication(ctx context.Context, in *TwoFactorAuthenticationRequest, opts ...grpc.CallOption) (*TwoFactorAuthenticationResponse, error)
 }
 
 type authServiceClient struct {
@@ -79,6 +83,24 @@ func (c *authServiceClient) PasswordRecovery(ctx context.Context, in *PasswordRe
 	return out, nil
 }
 
+func (c *authServiceClient) ResetPassword(ctx context.Context, in *ResetPasswordRequest, opts ...grpc.CallOption) (*ResetPasswordResponse, error) {
+	out := new(ResetPasswordResponse)
+	err := c.cc.Invoke(ctx, AuthService_ResetPassword_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *authServiceClient) TwoFactorAuthentication(ctx context.Context, in *TwoFactorAuthenticationRequest, opts ...grpc.CallOption) (*TwoFactorAuthenticationResponse, error) {
+	out := new(TwoFactorAuthenticationResponse)
+	err := c.cc.Invoke(ctx, AuthService_TwoFactorAuthentication_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AuthServiceServer is the server API for AuthService service.
 // All implementations must embed UnimplementedAuthServiceServer
 // for forward compatibility
@@ -87,6 +109,8 @@ type AuthServiceServer interface {
 	Logout(context.Context, *LogoutRequest) (*LogoutResponse, error)
 	ChangePassword(context.Context, *ChangePasswordRequest) (*ChangePasswordResponse, error)
 	PasswordRecovery(context.Context, *PasswordRecoveryRequest) (*PasswordRecoveryResponse, error)
+	ResetPassword(context.Context, *ResetPasswordRequest) (*ResetPasswordResponse, error)
+	TwoFactorAuthentication(context.Context, *TwoFactorAuthenticationRequest) (*TwoFactorAuthenticationResponse, error)
 	mustEmbedUnimplementedAuthServiceServer()
 }
 
@@ -105,6 +129,12 @@ func (UnimplementedAuthServiceServer) ChangePassword(context.Context, *ChangePas
 }
 func (UnimplementedAuthServiceServer) PasswordRecovery(context.Context, *PasswordRecoveryRequest) (*PasswordRecoveryResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PasswordRecovery not implemented")
+}
+func (UnimplementedAuthServiceServer) ResetPassword(context.Context, *ResetPasswordRequest) (*ResetPasswordResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ResetPassword not implemented")
+}
+func (UnimplementedAuthServiceServer) TwoFactorAuthentication(context.Context, *TwoFactorAuthenticationRequest) (*TwoFactorAuthenticationResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method TwoFactorAuthentication not implemented")
 }
 func (UnimplementedAuthServiceServer) mustEmbedUnimplementedAuthServiceServer() {}
 
@@ -191,6 +221,42 @@ func _AuthService_PasswordRecovery_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AuthService_ResetPassword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ResetPasswordRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServiceServer).ResetPassword(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AuthService_ResetPassword_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServiceServer).ResetPassword(ctx, req.(*ResetPasswordRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AuthService_TwoFactorAuthentication_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TwoFactorAuthenticationRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServiceServer).TwoFactorAuthentication(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AuthService_TwoFactorAuthentication_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServiceServer).TwoFactorAuthentication(ctx, req.(*TwoFactorAuthenticationRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AuthService_ServiceDesc is the grpc.ServiceDesc for AuthService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -213,6 +279,14 @@ var AuthService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "PasswordRecovery",
 			Handler:    _AuthService_PasswordRecovery_Handler,
+		},
+		{
+			MethodName: "ResetPassword",
+			Handler:    _AuthService_ResetPassword_Handler,
+		},
+		{
+			MethodName: "TwoFactorAuthentication",
+			Handler:    _AuthService_TwoFactorAuthentication_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

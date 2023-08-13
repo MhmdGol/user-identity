@@ -1,16 +1,24 @@
 package repository
 
-import "Identity/internal/model"
+import (
+	"Identity/internal/model"
+	"context"
+)
 
 type SessionRepo interface {
-	Add(model.Session) error
-	Remove(model.ID) error
-	UpdateByID(model.ID) error
-	ByID(model.ID) (model.Session, error)
+	Add(context.Context, model.Session) error
+	Remove(context.Context, model.ID) error
+	UpdateByID(context.Context, model.ID) error
+	ByID(context.Context, model.ID) (model.Session, error)
 }
 
 type UserRepo interface {
-	Create(model.RawUser) error
-	ByID(model.ID) (model.UserInfo, error)
-	ByUsername(string) (model.UserInfo, error)
+	Create(context.Context, model.RawUser) error
+	ByID(context.Context, model.ID) (model.UserInfo, error)
+	ByUsername(context.Context, string) (model.UserInfo, error)
+}
+
+type TrackRepo interface {
+	Create(context.Context, model.TrackInfo) error
+	All(context.Context) (model.TrackInfo, error)
 }

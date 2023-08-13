@@ -44,7 +44,8 @@ func NewJwtHandler(conf config.RSAPair) *JwtToken {
 func (j *JwtToken) MakeToken(c model.TokenClaim) (model.JwtToken, error) {
 
 	claims := jwt.MapClaims{
-		"id": c.ID,
+		"id":       c.ID,
+		"username": c.Username,
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodRS256, claims)
@@ -68,8 +69,15 @@ func (j *JwtToken) ExtractClaims(t model.JwtToken) (model.TokenClaim, error) {
 			return model.TokenClaim{}, fmt.Errorf("invalid token: id not found")
 		}
 		sfId, _ := snowflake.ParseString(id)
+
+		username, ok := claims["username"].(string)
+		if !ok {
+			return model.TokenClaim{}, fmt.Errorf("invalid token: username not found")
+		}
+
 		return model.TokenClaim{
-			ID: model.ID(sfId),
+			ID:       model.ID(sfId),
+			Username: username,
 		}, nil
 	}
 	return model.TokenClaim{}, fmt.Errorf("invalid token")

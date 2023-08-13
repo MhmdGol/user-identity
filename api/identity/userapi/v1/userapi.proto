@@ -11,22 +11,6 @@ service UserService {
     rpc ChangeStatus(ChangeStatusRequest) returns (ChangeStatusResponse);
 }
 
-message ChangeStatusRequest {
-    string id = 1;
-    string status = 2;
-}
-
-message ChangeStatusResponse {}
-
-message ChangePermissionRequest {
-    string id = 1;
-    string permission_object = 2;
-    string permission_action = 3;
-}
-
-message ChangePermissionResponse {
-
-}
 
 message CreateUserRequest {
     string uun = 1;
@@ -51,3 +35,18 @@ message UserByIDResponse {
     string role = 5;
     string status = 7;
 }
+
+message ChangePermissionRequest {
+    string username = 1;
+    string new_role = 2;
+}
+
+message ChangePermissionResponse {}
+
+message ChangeStatusRequest {
+    string id = 1;
+    string status = 2;
+}
+
+message ChangeStatusResponse {}
+

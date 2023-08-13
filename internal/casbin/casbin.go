@@ -37,17 +37,29 @@ func NewEnforcer(conf config.Config) (*casbin.Enforcer, error) {
 	`)
 
 	return casbin.NewEnforcer(m, a)
+}
 
-	// // Load the policy from DB.
-	// e.LoadPolicy()
+func InitializeEnforcer(e *casbin.Enforcer) {
+	e.LoadPolicy()
 
-	// // Check the permission.
-	// e.Enforce("alice", "data1", "read")
+	e.AddPolicy("admin", "users", "create")
+	e.AddPolicy("admin", "users", "update")
+	e.AddPolicy("admin", "users", "read")
+	e.AddPolicy("admin", "permissions", "create")
+	e.AddPolicy("admin", "permissions", "update")
+	e.AddPolicy("admin", "permissions", "read")
+	e.AddPolicy("admin", "status", "create")
+	e.AddPolicy("admin", "status", "update")
+	e.AddPolicy("admin", "status", "read")
 
-	// // Modify the policy.
-	// // e.AddPolicy(...)
-	// // e.RemovePolicy(...)
+	e.AddPolicy("staff", "users", "update")
+	e.AddPolicy("staff", "users", "read")
+	e.AddPolicy("staff", "permissions", "update")
+	e.AddPolicy("staff", "permissions", "read")
+	e.AddPolicy("staff", "status", "update")
+	e.AddPolicy("staff", "status", "read")
 
-	// // Save the policy back to DB.
-	// e.SavePolicy()
+	e.AddPolicy("user", "users", "read")
+
+	e.SavePolicy()
 }

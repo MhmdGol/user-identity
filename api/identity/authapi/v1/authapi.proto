@@ -9,7 +9,8 @@ service AuthService {
     rpc Logout(LogoutRequest) returns (LogoutResponse);
     rpc ChangePassword(ChangePasswordRequest) returns (ChangePasswordResponse);
     rpc PasswordRecovery(PasswordRecoveryRequest) returns (PasswordRecoveryResponse);
-    // TwoFactorAuthentication
+    rpc ResetPassword(ResetPasswordRequest) returns (ResetPasswordResponse);
+    rpc TwoFactorAuthentication(TwoFactorAuthenticationRequest) returns (TwoFactorAuthenticationResponse);
 }
 
 message LoginRequest {
@@ -24,7 +25,30 @@ message LoginResponse {
 message LogoutRequest {}
 message LogoutResponse {}
 
-message ChangePasswordRequest {}
+message ChangePasswordRequest {
+    string username = 1;
+    string old_password = 2;
+    string new_password = 3;
+}
+
 message ChangePasswordResponse {}
-message PasswordRecoveryRequest {}
+
+message PasswordRecoveryRequest {
+    string username = 1;
+}
+
 message PasswordRecoveryResponse {}
+
+message ResetPasswordRequest {
+    string new_password = 1;
+}
+message ResetPasswordResponse {}
+
+message TwoFactorAuthenticationRequest {
+    string username = 1;
+    string password = 2;
+    int32 code = 3;
+}
+message TwoFactorAuthenticationResponse {
+    string token = 1;
+}

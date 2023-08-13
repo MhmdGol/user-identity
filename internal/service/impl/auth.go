@@ -71,3 +71,21 @@ func (as *AuthService) Logout(ctx context.Context, t model.JwtToken) error {
 
 	return nil
 }
+
+func (as *AuthService) CheckSession(ctx context.Context, t model.JwtToken) error {
+	tc, err := as.jwt.ExtractClaims(t)
+	if err != nil {
+		return err
+	}
+
+	expTime, err = as.redisClient.Get(ctx, string(tc.ID)).Result()
+	if err == redis.Nil {
+		session, err := as.sessionRepo.ByID(tc.ID)
+		if err != nil {
+			return fmt.Errorf("need to log in first")
+		}
+		as.redisClient.Set(ctx, string(session.UserID), session, session.SessionExp-time)
+	} else if time.Now().UTC().After(cachedSession)
+
+	
+}
