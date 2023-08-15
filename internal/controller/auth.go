@@ -189,7 +189,7 @@ func (s *AuthServiceServer) TwoFactorAuthentication(ctx context.Context, req *au
 		Password: req.Password,
 	}
 
-	t, _ := s.authService.TwoFactorAuth(ctx, l, int(req.Code))
+	t, _ := s.authService.TwoFactorAuth(ctx, l, req.Code)
 
 	return &authapiv1.TwoFactorAuthenticationResponse{
 		Token: string(t),

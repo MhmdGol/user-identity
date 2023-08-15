@@ -11,7 +11,6 @@ service UserService {
     rpc ChangeStatus(ChangeStatusRequest) returns (ChangeStatusResponse);
 }
 
-
 message CreateUserRequest {
     string uun = 1;
     string username = 2;

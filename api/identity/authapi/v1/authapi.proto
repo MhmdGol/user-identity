@@ -47,7 +47,7 @@ message ResetPasswordResponse {}
 message TwoFactorAuthenticationRequest {
     string username = 1;
     string password = 2;
-    int32 code = 3;
+    string code = 3;
 }
 message TwoFactorAuthenticationResponse {
     string token = 1;

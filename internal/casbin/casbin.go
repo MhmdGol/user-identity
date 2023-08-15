@@ -36,7 +36,14 @@ func NewEnforcer(conf config.Config) (*casbin.Enforcer, error) {
 		g(r.sub, p.sub) && r.obj == p.obj && r.sub == p.sub
 	`)
 
-	return casbin.NewEnforcer(m, a)
+	e, err := casbin.NewEnforcer(m, a)
+	if err != nil {
+		return nil, err
+	}
+
+	InitializeEnforcer(e)
+
+	return e, nil
 }
 
 func InitializeEnforcer(e *casbin.Enforcer) {

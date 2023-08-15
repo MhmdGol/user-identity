@@ -169,9 +169,6 @@ func (s *UserServiceServer) ChangePermission(ctx context.Context, req *userapiv1
 
 	s.userService.ChangePermission(ctx, req.Username, req.NewRole)
 
-	// s.enforcer.RemoveFilteredGroupingPolicy(0, req.Username)
-	// s.enforcer.AddGroupingPolicy(req.Username, req.NewRole)
-
 	return nil, status.Error(codes.Code(code.Code_OK), "role changed, permissions affected")
 }
 
@@ -215,7 +212,10 @@ func (s *UserServiceServer) ChangeStatus(ctx context.Context, req *userapiv1.Cha
 	}
 
 	sId, _ := snowflake.ParseString(req.Id)
-	err = s.userService.UpdateByID(ctx, model.ID(sId), req.Status)
+	err = s.userService.UpdateByID(ctx, model.UserInfo{
+		ID:     model.ID(sId),
+		Status: req.Status,
+	})
 	if err != nil {
 		return nil, status.Error(codes.Code(code.Code_INTERNAL), "something went wrong")
 	}
