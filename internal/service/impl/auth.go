@@ -26,8 +26,20 @@ type AuthService struct {
 
 var _ service.AuthService = (*AuthService)(nil)
 
-func NewAuthService() *AuthService {
-	return &AuthService{}
+func NewAuthService(
+	u repository.UserRepo,
+	s repository.SessionRepo,
+	t repository.TrackRepo,
+	jt *jwt.JwtToken,
+	rc *redis.Client,
+) *AuthService {
+	return &AuthService{
+		userRepo:    u,
+		sessionRepo: s,
+		trackRepo:   t,
+		jwt:         jt,
+		redisClient: rc,
+	}
 }
 
 func (as *AuthService) Login(ctx context.Context, l model.LoginInfo) (model.JwtToken, error) {

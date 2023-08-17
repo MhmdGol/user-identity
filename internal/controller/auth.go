@@ -25,6 +25,20 @@ type AuthServiceServer struct {
 
 var _ authapiv1.AuthServiceServer = (*AuthServiceServer)(nil)
 
+func NewAuthServiceServer(
+	as service.AuthService,
+	ss service.SessionService,
+	il *limiter.IPLimiter,
+	jt *jwt.JwtToken,
+) *AuthServiceServer {
+	return &AuthServiceServer{
+		authService:    as,
+		sessionService: ss,
+		iplimiter:      il,
+		jwt:            jt,
+	}
+}
+
 func (s *AuthServiceServer) Login(ctx context.Context, req *authapiv1.LoginRequest) (*authapiv1.LoginResponse, error) {
 	peer, ok := peer.FromContext(ctx)
 	if ok {

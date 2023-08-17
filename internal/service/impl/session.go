@@ -19,8 +19,11 @@ type SessionService struct {
 
 var _ service.SessionService = (*SessionService)(nil)
 
-func NewSessionService() *SessionService {
-	return &SessionService{}
+func NewSessionService(s repository.SessionRepo, rc *redis.Client) *SessionService {
+	return &SessionService{
+		sessionRepo: s,
+		redisClient: rc,
+	}
 }
 
 func (ss *SessionService) CheckSession(ctx context.Context, id model.ID) error {

@@ -10,7 +10,7 @@ import (
 	"fmt"
 
 	"github.com/bwmarrin/snowflake"
-	"github.com/casbin/casbin"
+	"github.com/casbin/casbin/v2"
 	"google.golang.org/genproto/googleapis/rpc/code"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
@@ -19,15 +19,31 @@ import (
 )
 
 type UserServiceServer struct {
+	userService    service.UserService
+	sessionService service.SessionService
 	iplimiter      *limiter.IPLimiter
 	enforcer       *casbin.Enforcer
 	jwt            *jwt.JwtToken
-	userService    service.UserService
-	sessionService service.SessionService
 	userapiv1.UnimplementedUserServiceServer
 }
 
 var _ userapiv1.UserServiceServer = (*UserServiceServer)(nil)
+
+func NewUserServiceServer(
+	us service.UserService,
+	ss service.SessionService,
+	il *limiter.IPLimiter,
+	e *casbin.Enforcer,
+	jt *jwt.JwtToken,
+) *UserServiceServer {
+	return &UserServiceServer{
+		userService:    us,
+		sessionService: ss,
+		iplimiter:      il,
+		enforcer:       e,
+		jwt:            jt,
+	}
+}
 
 func (s *UserServiceServer) CreateUser(ctx context.Context, req *userapiv1.CreateUserRequest) (*userapiv1.CreateUserResponse, error) {
 	peer, ok := peer.FromContext(ctx)
@@ -60,7 +76,8 @@ func (s *UserServiceServer) CreateUser(ctx context.Context, req *userapiv1.Creat
 	}
 
 	s.enforcer.LoadPolicy()
-	if !s.enforcer.Enforce(tc.Username, "users", "create") {
+	permission, _ := s.enforcer.Enforce(tc.Username, "users", "create")
+	if !permission {
 		return nil, status.Error(codes.Code(code.Code_PERMISSION_DENIED), "not allowed")
 	}
 
@@ -111,7 +128,8 @@ func (s *UserServiceServer) UserByID(ctx context.Context, req *userapiv1.UserByI
 	}
 
 	s.enforcer.LoadPolicy()
-	if !s.enforcer.Enforce(tc.Username, "users", "read") {
+	permission, _ := s.enforcer.Enforce(tc.Username, "users", "create")
+	if !permission {
 		return nil, status.Error(codes.Code(code.Code_PERMISSION_DENIED), "not allowed")
 	}
 
@@ -163,7 +181,8 @@ func (s *UserServiceServer) ChangePermission(ctx context.Context, req *userapiv1
 	}
 
 	s.enforcer.LoadPolicy()
-	if !s.enforcer.Enforce(tc.Username, "permissions", "update") {
+	permission, _ := s.enforcer.Enforce(tc.Username, "users", "create")
+	if !permission {
 		return nil, status.Error(codes.Code(code.Code_PERMISSION_DENIED), "not allowed")
 	}
 
@@ -203,7 +222,8 @@ func (s *UserServiceServer) ChangeStatus(ctx context.Context, req *userapiv1.Cha
 	}
 
 	s.enforcer.LoadPolicy()
-	if !s.enforcer.Enforce(tc.Username, "status", "update") {
+	permission, _ := s.enforcer.Enforce(tc.Username, "users", "create")
+	if !permission {
 		return nil, status.Error(codes.Code(code.Code_PERMISSION_DENIED), "not allowed")
 	}
 

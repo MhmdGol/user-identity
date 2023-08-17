@@ -8,20 +8,24 @@ import (
 	"context"
 
 	"github.com/bwmarrin/snowflake"
-	"github.com/casbin/casbin"
+	"github.com/casbin/casbin/v2"
 	"github.com/pquerna/otp/totp"
 )
 
 type UserService struct {
 	userRepo repository.UserRepo
 	enforcer *casbin.Enforcer
-	sf       snowflake.Node
+	sf       *snowflake.Node
 }
 
 var _ service.UserService = (*UserService)(nil)
 
-func NewUserService() *UserService {
-	return &UserService{}
+func NewUserService(u repository.UserRepo, e *casbin.Enforcer, n *snowflake.Node) *UserService {
+	return &UserService{
+		userRepo: u,
+		enforcer: e,
+		sf:       n,
+	}
 }
 
 func (us *UserService) Create(ctx context.Context, ru model.RawUser) error {
