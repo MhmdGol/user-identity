@@ -72,8 +72,4 @@ func run() error {
 	authapiv1.RegisterAuthServiceServer(server, ass)
 
 	return server.Serve(lis)
-
-	node.Generate()
-
-	return nil
 }

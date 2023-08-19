@@ -33,7 +33,7 @@ func NewEnforcer(conf config.Config) (*casbin.Enforcer, error) {
 		e = some(where (p.eft == allow))
 
 		[matchers]
-		g(r.sub, p.sub) && r.obj == p.obj && r.sub == p.sub
+		m = g(r.sub, p.sub) && r.obj == p.obj && r.act == p.act
 	`)
 
 	e, err := casbin.NewEnforcer(m, a)
